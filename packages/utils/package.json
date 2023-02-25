@@ -1,0 +1,14 @@
+{
+  "name": "@jw-plus/utils",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "license": "MIT",
+  "main": "index.ts",
+  "scripts": {
+    "build": "gulp"
+  },
+  "keywords": [],
+  "author": "",
+  "devDependencies": {}
+}

@@ -1,0 +1,14 @@
+{
+  "name": "jw-plus",
+  "version": "1.0.0",
+  "private": false,
+  "description": "",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
