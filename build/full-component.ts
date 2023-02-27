@@ -3,7 +3,8 @@
  */
 import { nodeResolve } from "@rollup/plugin-node-resolve";  // 处理文件路径
 import commonjs from "@rollup/plugin-commonjs"; // 将 CommonJS 模块转换为 ES6
-import vue from "rollup-plugin-vue";
+import vue from "@vitejs/plugin-vue";
+import VueTypeImports from '@rah-emil/vite-plugin-vue-type-imports';
 import typescript from "rollup-plugin-typescript2";
 import { parallel } from "gulp";
 import path from "path";
@@ -12,12 +13,15 @@ import { rollup, OutputOptions } from "rollup";
 import fs from "fs/promises";
 import { buildConfig } from "./utils/config";
 import { pathRewriter } from "./utils";
+import dts from "rollup-plugin-dts";
+import vueSetupExtend from 'vite-plugin-vue-setup-extend';
 
+// 全量打包
 const buildFull = async () => {
   // rollup 打包的配置信息
   const config = {
     input: path.resolve(wpRoot, "index.ts"), // 打包入口
-    plugins: [nodeResolve(), typescript(), vue(), commonjs()],
+    plugins: [nodeResolve(), typescript(), vue(), vueSetupExtend(), VueTypeImports(), commonjs()],
     external: (id) => /^vue/.test(id), // 打包的时候不打包vue代码
   };
 
@@ -29,7 +33,7 @@ const buildFull = async () => {
     {
       format: "umd", // 打包的格式
       file: path.resolve(outDir, "index.js"),
-      name: "wPlus", // 全局变量名字
+      name: "jwPlus", // 全局变量名字
       exports: "named", // 导出的名字 用命名的方式导出 libaryTarget:"" name:""
       globals: {
         // 表示使用的vue是全局的
@@ -64,7 +68,7 @@ async function buildEntry() {
 
   const config = {
     input: entryPoints,
-    plugins: [nodeResolve(), vue(), typescript()],
+    plugins: [nodeResolve(), vue(), typescript(), vueSetupExtend()],
     external: (id: string) => /^vue/.test(id) || /^@jw-plus/.test(id),
   };
   const bundle = await rollup(config);

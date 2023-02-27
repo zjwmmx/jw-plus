@@ -4,22 +4,31 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<!-- <script lang="ts">
+import {defineComponent} from 'vue'
+export default defineComponent({
+  name: "Button",
+})
+</script> -->
+
+<script setup lang="ts" name="wButton">
 // 第一种写法
 // import { buttonProps } from "./types";
 // const props = defineProps(buttonProps);
 
 // 第二种写法
-import { ButtonSize as Size } from "./types";
+import { buttonProps } from "./Button";
 
-export interface ButtonProps {
-  zzzww: string;
-  size: Size;
-}
+const props = defineProps(buttonProps);
 
-const props = withDefaults(defineProps<ButtonProps>(), {
-  visiw: "button",
-  size: "large",
-  zzzww: "sssf",
-});
+// export interface ButtonProps {
+//   zzzww: string;
+//   size: string;
+// }
+
+// const props = withDefaults(defineProps<ButtonProps>(), {
+//   visiw: "button",
+//   size: "large",
+//   zzzww: "sssf",
+// });
 </script>

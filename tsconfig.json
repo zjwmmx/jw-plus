@@ -1,11 +1,5 @@
 {
   // "extends": "@vue/tsconfig/tsconfig.web.json",
-  "exclude": [
-    // 排除掉哪些类库
-    "node_modules",
-    "**/__tests__",
-    "jw-plus/**"
-  ],
   // "include": ["env.d.ts", "packages"],
   "compilerOptions": {
     "module": "ESNext", // 打包模块类型ESNext
@@ -23,7 +17,6 @@
       "ESNext",
       "DOM"
     ],
-    // "types": ["unplugin-vue-macros/macros-global"],
     "allowSyntheticDefaultImports": true, // 允许没有导出的模块中导入
     "experimentalDecorators": true, // 装饰器语法
     "forceConsistentCasingInFileNames": true, // 强制区分大小写
@@ -31,4 +24,10 @@
     "strict": true, // 是否启动严格模式
     "skipLibCheck": true // 跳过类库检测
   },
+  "exclude": [
+    // 排除掉哪些类库
+    "node_modules",
+    "**/__tests__",
+    "jw-plus/**"
+  ]
 }

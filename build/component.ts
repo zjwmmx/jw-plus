@@ -3,7 +3,7 @@
  */
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import vue from "rollup-plugin-vue";
+import vue from "@vitejs/plugin-vue";
 import typescript from "rollup-plugin-typescript2";
 import { series, parallel } from "gulp";
 import { sync } from "fast-glob"; // 同步查找文件
@@ -16,6 +16,8 @@ import { Project, SourceFile } from "ts-morph";
 import glob from "fast-glob";
 import * as VueCompiler from "@vue/compiler-sfc";
 import fs from "fs/promises";
+import dts from "rollup-plugin-dts";
+import vueSetupExtend from 'vite-plugin-vue-setup-extend'
 // import VueMacros from 'unplugin-vue-macros/rollup'
 
 const buildEachComponent = async () => {
@@ -32,8 +34,10 @@ const buildEachComponent = async () => {
     const input = path.resolve(compRoot, file, "index.ts");
     const config = {
       input,
-      plugins: [nodeResolve(), typescript(), vue(), commonjs()],
-      external: (id) => /^vue/.test(id) || /^@jw-plus/.test(id), // 排除掉vue和@w-plus的依赖
+      plugins: [nodeResolve(), typescript(), vue(), vueSetupExtend(), commonjs()],
+      external: (id) => {
+        return /^vue/.test(id) || /^@jw-plus/.test(id)
+      }, // 排除掉vue和@w-plus的依赖
     };
     const bundle = await rollup(config);
     const options = Object.values(buildConfig).map((config) => ({
@@ -51,6 +55,7 @@ const buildEachComponent = async () => {
   return Promise.all(builds);
 };
 
+let index = 1;
 async function genTypes() {
   const project = new Project({
     // 生成.d.ts 我们需要有一个tsconfig
@@ -59,18 +64,20 @@ async function genTypes() {
       declaration: true,
       emitDeclarationOnly: true,
       noEmitOnError: true,
+      preserveSymlinks: true,
+      skipLibCheck: true,
+      noImplicitAny: false,
       outDir: path.resolve(outDir, "types"),
       baseUrl: projectRoot,
       paths: {
         "@jw-plus/*": ["packages/*"],
       },
-      skipLibCheck: true,
       strict: false,
     },
     tsConfigFilePath: path.resolve(projectRoot, "tsconfig.json"),
     skipAddingFilesFromTsConfig: true,
   });
-
+  
   const filePaths = await glob("**/*", {
     // ** 任意目录  * 任意文件
     cwd: compRoot,
@@ -85,11 +92,19 @@ async function genTypes() {
       if (file.endsWith(".vue")) {
         const content = await fs.readFile(file, "utf8");
         const sfc = VueCompiler.parse(content);
-        const { script } = sfc.descriptor;
+        const { script, scriptSetup } = sfc.descriptor;
         if (script) {
-          let content = script.content; // 拿到脚本  icon.vue.ts  => icon.vue.d.ts
+          let content = script?.content || scriptSetup?.content; // 拿到脚本  icon.vue.ts  => icon.vue.d.ts
           const sourceFile = project.createSourceFile(file + ".ts", content);
           sourceFiles.push(sourceFile);
+        }
+        // setup语法糖处理
+        if(scriptSetup) {
+          const compiled = VueCompiler.compileScript(sfc.descriptor, {id: `${index++}`})
+          sourceFiles.push(
+            // 建立一个同路径的同名 ts/js 的映射文件
+            project.createSourceFile(`${file}.ts`, compiled.content)
+          )
         }
       } else {
         const sourceFile = project.addSourceFileAtPath(file); // 把所有的ts文件都放在一起 发射成.d.ts文件

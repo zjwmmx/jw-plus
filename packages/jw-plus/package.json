@@ -1,6 +1,6 @@
 {
   "name": "jw-plus",
-  "version": "1.0.0",
+  "version": "1.0.8",
   "private": false,
   "description": "",
   "main": "lib/index.js",
@@ -8,7 +8,18 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "peerDependencies": {
+    "vue": "^3.2.0"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@types/node": "*",
+    "csstype": "^2.6.20",
+    "vue": "^3.2.37",
+    "vue-router": "^4.0.16"
+  },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "MIT"
 }

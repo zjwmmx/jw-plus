@@ -27,8 +27,11 @@ export const useInstall = (components: Plugin[] = []) => {
     // if (app[INSTALLED_KEY]) return
 
     // app[INSTALLED_KEY] = true
-    components.forEach((c: any) => app.component(c.name, c.component))
+    // components.forEach((c: any) => app.component(c.name, c.component))
 
+    Object.entries(components).forEach(([name, component]) => {
+      app.use(component);
+    });
     // if (options) provideGlobalConfig(options, app, true)
   }
   return install;

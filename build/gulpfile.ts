@@ -22,8 +22,11 @@ export default series(
   withTaskName('clean', async () => run('rm -rf ./dist')), // 删除dist目录
   parallel(
     withTaskName('buildPackages', () =>
-      run('pnpm run --filter ./packages --parallel build'),
+      run('pnpm -r --filter ./packages/** run build'),
     ), // 并行执行packages目录下的build脚本
+    // withTaskName('buildUtils', () =>
+    //   run('pnpm -r --filter ./packages/utils --parallel run build'),
+    // ), // 并行执行packages目录下的build脚本
     withTaskName('buildFullComponent', () =>
       run('pnpm run build buildFullComponent'),
     ), // 执行build命令时会调用rollup，给rollup传参数buildFullComponent，那么就会执行导出任务叫buildFullComponent

@@ -2,8 +2,7 @@
   "name": "@jw-plus/utils",
   "version": "1.0.0",
   "description": "",
-  "private": true,
-  "license": "MIT",
+  "license": "ISC",
   "main": "index.ts",
   "scripts": {
     "build": "gulp"

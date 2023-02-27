@@ -21,4 +21,4 @@ export const Input = withInstall(input);
 
 export default Input;
 
-export * from "./src/types";
+// export * from "./src/types";
